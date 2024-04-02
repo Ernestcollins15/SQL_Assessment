@@ -1,6 +1,6 @@
 -- Creating the client table
 CREATE TABLE client (
-    client_id SERIAL PRIMARY KEY,
+     client_id SERIAL PRIMARY KEY
     ,first_name VARCHAR(50)
     ,middle_name VARCHAR(50)
     ,last_name VARCHAR(50)
@@ -81,7 +81,8 @@ WHERE
     EXTRACT(YEAR FROM AGE(CURRENT_DATE, c.date_of_birth)) > 25 --Employing the use of "AGE" function to calculate difference between the current date and the date_of_birth
 ORDER BY
     age_in_years 
-	DESC;
+	DESC
+;
 
 
 
@@ -97,14 +98,16 @@ ADD COLUMN num_loans INTEGER DEFAULT 0; --- using the default as 0 to ensure tha
 UPDATE client c
 SET num_loans = COALESCE((SELECT COUNT(*) FROM loan l ---Using COALESCE function is used to handle cases where a client has no loans
 						  WHERE
-						  l.client_id = c.client_id), 0); --Using  a correlated subquery to update the num_loans column in the client table
-
+						  l.client_id = c.client_id), 0) --Using  a correlated subquery to update the num_loans column in the client table
+;
 
 
 ---Question 3
 -- Select the 100cc, 125cc and 150cc bikes from the vehicle table.
 -- Add an engine_size column to the output (that contains the engine size).
 
+ 
+-- Adding the engine_size column to the vehicle table using  'CASE'  statement to determine the engine size based on the model name
 --- We will need to employ the use of 'CASE'  statement to determine the engine size based on the model name 
 SELECT
     vehicle_id
@@ -122,7 +125,9 @@ WHERE
     model_name LIKE '%100CC%' OR
     model_name LIKE '%125CC%' OR
     model_name LIKE '%150CC%'
-	;
+;
+	
+	
 
 
 ---Question 4
@@ -140,7 +145,8 @@ LEFT JOIN
     vehicle v ON l.vehicle_id = v.vehicle_id
 GROUP BY
     client_full_name, 
-	vehicle_make;
+	vehicle_make
+; 
 
 
 
@@ -149,12 +155,10 @@ GROUP BY
 -- 1 if it's the client's first sale, 2 if it's the client's second sale etc.
 -- Call it loan_order
 SELECT
-    *
-   ,ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY submitted_on_date) AS loan_order
+    * ,
+	ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY submitted_on_date) AS loan_order
 FROM
-    loan;
+    loan
+;
 
-
-
-	
 

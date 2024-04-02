@@ -1,5 +1,5 @@
-PostgreSql - Ernest Cheruiyot
-Github Link to my assessment 
+PostgreSql
+Github Link to my Assessment responses ~ https://github.com/Ernestcollins15/SQL_Assessment
 
 --------------------------------------------------------------------------------
 -- TABLES STRUCTURE
@@ -54,7 +54,8 @@ NOTE: these are just extracts from bigger tables, to show their structure
 
 
 
-PostgreSql - Ernest Cheruiyot
+PostgreSql 
+
 
 --------------------------------------------------------------------------------
 -- QUESTIONS
@@ -62,9 +63,12 @@ PostgreSql - Ernest Cheruiyot
 
 Using the tables above, please write the SQL code that would answer each of the following questions (write the code below each of them).
 
+
+
 1. -- Select all the clients called Paul in first_name or middle_name and who are more than 25 years old.
    -- In the results, create a column with the client's age in years. 
    -- Order them from older to younger.
+
 SELECT
     c.client_id
    ,CONCAT(c.first_name, ' ', c.middle_name, ' ', c.last_name) AS full_name
@@ -75,8 +79,8 @@ WHERE
     (c.first_name = 'Paul' OR c.middle_name = 'Paul') AND
     EXTRACT(YEAR FROM AGE(CURRENT_DATE, c.date_of_birth)) > 25 --Employing the use of "AGE" function to calculate difference between the current date and the date_of_birth
 ORDER BY
-    age_in_years 
-	DESC;
+    age_in_years DESC
+;
 
 
 
@@ -84,23 +88,24 @@ ORDER BY
 2. -- Add a column to the table from question (1) that contains the number of loans each customer made.
    -- If there is no loan, this column should show 0.
 
----Adding a column ~ num_loans to the existing client table to store the number of loans each customer made
+---Adding a new column [num_loans] to the existing client table to store the number of loans each customer made
 ALTER TABLE client
 ADD COLUMN num_loans INTEGER DEFAULT 0; --- using the default as 0 to ensure that clients without any loans are correctly initialized
 
 -- Updating the num_loans column with the count of loans for each client
+--Using COALESCE function is used to handle cases where a client has no loans
 UPDATE client c
-SET num_loans = COALESCE((SELECT COUNT(*) FROM loan l ---Using COALESCE function is used to handle cases where a client has no loans
-						  WHERE
-						  l.client_id = c.client_id), 0); --Using  a correlated subquery to update the num_loans column in the client table
-
+SET num_loans = COALESCE((SELECT COUNT(*) FROM loan l WHERE l.client_id = c.client_id), 0) --Using  a correlated subquery to update the num_loans column in the client table
+;
 
 
 
 3. -- Select the 100cc, 125cc and 150cc bikes from the vehicle table.
    -- Add an engine_size column to the output (that contains the engine size).
 
+
 --- We will need to employ the use of 'CASE'  statement to determine the engine size based on the model name 
+---Since we only need to Add an engine_size column to the *Output* we will not need to alter the table
 SELECT
     vehicle_id
    ,make
@@ -117,11 +122,12 @@ WHERE
     model_name LIKE '%100CC%' OR
     model_name LIKE '%125CC%' OR
     model_name LIKE '%150CC%'
-	;
+;
 
 
 
 4. -- Calculate the total principal_amount per client full name (one column that includes all the names for each client) and per vehicle make.
+
 
 SELECT
     CONCAT(c.first_name, ' ', c.middle_name, ' ', c.last_name) AS client_full_name
@@ -134,8 +140,8 @@ LEFT JOIN
 LEFT JOIN
     vehicle v ON l.vehicle_id = v.vehicle_id
 GROUP BY
-    client_full_name, 
-	vehicle_make;
+    client_full_name, vehicle_make
+;
 
 
 
@@ -146,7 +152,7 @@ GROUP BY
    -- Call it loan_order
 
 SELECT
-    *
-   ,ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY submitted_on_date) AS loan_order
+   * , ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY submitted_on_date) AS loan_order
 FROM
-    loan;
+    loan
+;
